@@ -5,6 +5,7 @@ $map = [
 		'Movies (General)',
 		'Movies (Holiday)',
 		'Movies (Kids)',
+		'Movies (Disney)',
 	],
 	'TV Shows' => [
 		'TV Shows (Documentary)',
@@ -45,21 +46,46 @@ $fields = [
 	'audience_rating',
 ];
 
-if (!count($fields)) {
+$db_file = $install_type = null;
+$db_files = [
+	// DEFAULT DB LOCATION
+	'/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db',
+	// SNAP-INSTALLED DB LOCATION
+	'/var/snap/plexmediaserver/common/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db',
+];
+
+foreach ($db_files AS $file) {
+	if (file_exists($file)) {
+		$db_file = $file;
+		break;
+	}
+}
+
+if ((!count($fields)) OR (!$db_file)) {
 	// MIS-CONFIGURED, JUST BAIL
 	exit;
 }
 
-$db = new PDO(
-	'sqlite:/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db',
-	null,
-	null,
-	[
-		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-		PDO::ATTR_EMULATE_PREPARES => false,
-	]
-);
+$install_type = explode('/', trim($db_file, '/'))[1];
+
+try {
+	$db = new PDO(
+		('sqlite:' . $db_file),
+		null,
+		null,
+		[
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+			PDO::ATTR_EMULATE_PREPARES => false,
+		]
+	);
+} catch (Exception $e) {
+	echo 'Plex DB repair triggered';
+	exec(__DIR__ . '/repair_' . $install_type . '.sh');
+	exit;
+}
+
+exec('service plexmediaserver stop');
 
 $query = '
 	SELECT id
@@ -135,3 +161,5 @@ foreach ($map AS $source => $targets) {
 		}
 	}
 }
+
+exec('service plexmediaserver start');
