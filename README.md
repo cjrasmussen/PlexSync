@@ -12,15 +12,15 @@ That works fine until I manually edit the metadata for a movie.  I want "Die Har
 
 ## Configuration
 
-Update the `$map` array in `plex_sync.php` such that the keys are either the IDs or names of your "source" library. The corresponding value for that source should be the name or IDs of each "child" library. Using an ID here is technically better for performance as it allows for skipping the ID lookup but library titles are more readable. IDs should be used if your library titles are not unique.
+Update the `$map` array in `src/sync.php` such that the keys are either the IDs or names of your "source" library. The corresponding value for that source should be the name or IDs of each "child" library. Using an ID here is technically better for performance as it allows for skipping the ID lookup but library titles are more readable. IDs should be used if your library titles are not unique.
 
-Update the `$fields` array in `plex_sync.php` such that it includes all of the fields you want to sync. If you want to sync the title but not the sort title, remove `sort_title` from the array, for example.
+Update the `$fields` array in `src/sync.php` such that it includes all of the fields you want to sync. If you want to sync the title but not the sort title, remove `sort_title` from the array, for example.
 
 ## Running the Tool
 
-Copy the `plex_sync.php` script to the machine you're running Plex from. Make sure you can execute PHP on that machine. From wherever you copied `plex_sync.php` to, run `php plex_sync.php`.
+Copy the `src` directory to the machine you're running Plex from. Make sure you can execute PHP on that machine. From wherever you copied `src` to, run `php sync.php`.
 
-Depending on your setup, you might need to run it as a different user or with different permissions.
+Depending on your setup, you might need to run it as a different user or with different permissions. On my personal setup, I need to sudo it, for example.
 
 You can also run it as a cron/scheduled task if you know what you're doing. That's entirely up to you.
 
