@@ -1,5 +1,7 @@
 # Plex Library Sync Tool
 
+_This project is now archived. It does not work with modern versions of Plex Media Server (and barely worked with older versions in the first place)._
+
 Tool for syncing library metadata for items shared across multiple libraries.
 
 I'm the first to admit that I don't know much about the inner workings of Plex, so this may be a horrible way of doing things. It might not even work all the time. I don't know. Caveat utilitor.
